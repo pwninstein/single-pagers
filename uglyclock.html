@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var sweetFonts = ['Papyrus', 'Comic Sans MS', 'Times New Roman', 'Impact', 'Helvetica', 'Garamond', 'Trebuchet MS'];
+        
+        $(function () {
+            $('body').css('background-color', getRandomHexColor());
+            $('#date').css('font-family', getRandomFont()).css('color', getRandomHexColor()).css('font-size', getRandomBetween(10, 60));
+            $('#time').css('font-family', getRandomFont()).css('color', getRandomHexColor()).css('font-size', getRandomBetween(10, 60));
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        function getRandomHexColor() {
+            var r = getRandomBetween(0, 14).toString(16);
+            var g = getRandomBetween(0, 14).toString(16);
+            var b = getRandomBetween(0, 14).toString(16);
+            return '#' + r + g + b;
+        }
+
+        function getRandomFont() {
+            return sweetFonts[getRandomBetween(0, sweetFonts.length - 1)];
+        }
+
+        function updateTime() {
+            var current = new Date()
+
+            var time = pad(current.getHours(), 2) + ":"
+                + pad(current.getMinutes(), 2) + ":"
+                + pad(current.getSeconds(), 2);
+
+            var date = current.getFullYear() + "/"
+                + pad((current.getMonth() + 1), 2) + "/"
+                + current.getDate();
+
+            $('#time').text(time);
+            $('#date').text(date);
+
+            if (current.getSeconds() % 6 == 0) {
+                $('body').css('background-color', getRandomHexColor());
+            }
+        }
+
+        // http://stackoverflow.com/a/10073788/47645
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
+        function getRandomBetween(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+    <style type="text/css">
+        @-webkit-keyframes pulsate {
+            0% { opacity: 0.4; }
+            50% { opacity: 1.0; }
+            100% { opacity: 0.4; }
+        }
+
+        header ul { list-style: none; padding: 0; }
+        header ul li { display: inline; }
+        header a { color: black; }
+        header a:visited { color: gray; }
+        #clock { text-align: center; margin-top: 20%; }
+        #date {
+            -webkit-animation: pulsate 2s ease-out;
+            -webkit-animation-iteration-count: infinite;
+        }
+        #time {
+            -webkit-animation: pulsate 1.3s ease-out;
+            -webkit-animation-iteration-count: infinite;
+        }
+    </style>
+    <title>Ugly Clock</title>
+</head>
+<body>
+    <header>
+        <ul>
+            <li><a href="https://twitter.com/pwninstein">Twitter</a></li>
+        </ul>
+    </header>
+    <div id="clock">
+        <div id="time"></div>
+        <div id="date"></div>
+    </div>
+</body>
+</html>
