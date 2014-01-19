@@ -38,7 +38,7 @@
             var perUnit = '?';
 
             if (isNumber(price) && isNumber(quantity)) {
-                
+
                 var perUnitValue = (parseFloat(price) / parseFloat(quantity)).toFixed(2);
 
                 if (isFinite(perUnitValue)) {
@@ -54,7 +54,7 @@
         }
 
         function highlightLowest() {
-            
+
             var lowestValue = null;
             var lowestString = null;
 
@@ -88,7 +88,7 @@
     <style type="text/css">
         input.price { width: 5em; }
         input.quantity { width: 5em; }
-        span.per-unit { display:inline-block; width: 4em; }
+        span.per-unit { display: inline-block; width: 4em; }
         li.highlight span.per-unit { background-color: #b6ff00; }
         footer ul { list-style: none; padding: 0; }
         footer ul li { display: inline; }
@@ -98,7 +98,8 @@
 <body>
     <h1>Comparer</h1>
     <p>
-        <em>Quickly compare 2 or more items by entering their prices and quantities. Have fun buying stuff!</em>
+        <em>Shopping? Need to know the best deal? Enter the prices and quantities of your items and compare the per-unit price.</em><br />
+        <em>The best deal will be highlighted. Have fun buying stuff!</em>
     </p>
     <div>
         <input type="button" id="add-item-button" value="Add Item" />
