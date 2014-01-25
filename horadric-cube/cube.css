@@ -3,6 +3,9 @@ body{
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 }
 
+footer ul { list-style: none; padding: 0; }
+footer ul li { display: inline; }
+
 .rune, .gem, .jewel {
 	height: 35px;
 	width: 35px;

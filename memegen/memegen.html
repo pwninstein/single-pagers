@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Meme Generator</title>
+    <script type="text/javascript">
+        var image;
+        var canvas;
+        var context;
+        var topText;
+        var bottomText;
+
+        function onLoad() {
+            image = new Image();
+            canvas = document.getElementById('canvas');
+            context = canvas.getContext('2d');
+            topText = document.getElementById('top');
+            bottomText = document.getElementById('bottom');
+            
+            topText.onkeyup = function () { draw(); };
+            bottomText.onkeyup = function () { draw(); };
+
+            image.crossOrigin = "Anonymous";
+            image.onload = function () {
+                draw();
+            };
+
+            var link = document.getElementById('download');
+
+            link.onclick = function () {
+                link.href = canvas.toDataURL();
+                link.download = "image.jpg";
+            };
+
+            document.getElementById('get-image').onclick = function () {
+                image.src = document.getElementById('image-url').value;
+            };
+        }
+        function draw() {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            context.drawImage(image, 0, 0);
+            
+            context.font = "normal 36px Impact";
+            context.fillStyle = "#FFFFFF";
+            context.lineWidth = 2;
+            context.strokeStyle = "#000000";
+
+            var topX = 20;
+            var topY = 40;
+            var bottomX = 20;
+            var bottomY = image.height - 20;
+
+            context.fillText(topText.value, topX, topY);
+            context.fillText(bottomText.value, bottomX, bottomY);
+            context.strokeText(topText.value, topX, topY);
+            context.strokeText(bottomText.value, bottomX, bottomY);
+        }
+    </script>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-41725429-9', 'watpage.com');
+        ga('send', 'pageview');
+    </script>
+    <style type="text/css">
+        #top, #bottom { display: block; }
+        input[type=text] { width: 20em; }
+    </style>
+</head>
+<body onload="onLoad()">
+    <p><a href="https://twitter.com/pwninstein" target="_blank">Twitter</a></p>
+    <h2>Meme Generator</h2>
+    <p><em>I wanted to see if I could write a client-side-only meme generator that also allowed file downloads. <a href="http://en.wikipedia.org/wiki/Cross-origin_resource_sharing" target="_blank">CORS</a> was a problem to deal with. Thankfully, <a href="http://imgur.com/">imgur</a> (S3?) sets the necessary reponse headers so that, if you set crossOrigin="Anonymous" on the <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement" target="_blank">HTMLImageElement</a>, then calling .toDataURL() on the <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a> doesn't complain about <a href="https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image" target="_blank">tainted</a> canvases... Poor quality, but working. 2 hours well-spent!</em></p>
+    <br />
+    <div>
+        <input type="text" id="image-url" placeholder="enter an imgur url"/>
+        <input type="button" id="get-image" value="Get image"/>
+    </div>
+    <div>
+        <input type="text" id="top" placeholder="top text"/>
+        <input type="text" id="bottom" placeholder="bottom text"/>
+        <br />
+        <a href="#" id="download" target="_blank">Download</a>
+    </div>
+    <canvas id="canvas" width="578" height="400" style="border: thin solid black;" />
+</body>
+</html>
