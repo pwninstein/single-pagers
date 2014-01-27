@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Dragon</title>
     <script type="text/javascript">
+
         var playerSprite = new Image();
         var canvas, context;
         var playerX = 10, playerY = 10;
@@ -14,8 +15,15 @@
         var facingUp, facingDown, facingLeft, facingRight;
         var speed = 5;
         var keysPressed = { 'w': false, 'a': false, 's': false, 'd': false };
+        var gamepad = null;
+        var gamepadName;
+
+        window.addEventListener("webkitgamepadconnected", function (e) {
+            gamepad = e.gamepad;
+        });
 
         function onLoad() {
+
             canvas = document.getElementById('canvas');
             context = canvas.getContext('2d');
             topText = document.getElementById('top');
@@ -48,12 +56,25 @@
         }
 
         function update() {
-            if (keysPressed.w) {
+
+            if (navigator.webkitGetGamepads) {
+                gamepad = navigator.webkitGetGamepads()[0]
+                if (gamepad != null) {
+                    gamepadName = gamepad.id;
+                }
+            }
+
+            if (gamepad == null)
+            {
+                gamepadName = null;
+            }
+
+            if (keysPressed.w || (gamepad != null && gamepad.axes[1] < -0.3)) {
                 playerY -= speed;
                 facingUp = true;
                 facingDown = false;
             }
-            else if (keysPressed.s) {
+            else if (keysPressed.s || (gamepad != null && gamepad.axes[1] > 0.3)) {
                 playerY += speed;
                 facingUp = false;
                 facingDown = true;
@@ -63,12 +84,12 @@
                 facingDown = false;
             }
 
-            if (keysPressed.a) {
+            if (keysPressed.a || (gamepad != null && gamepad.axes[0] < -0.3)) {
                 playerX -= speed;
                 facingLeft = true;
                 facingRight = false;
             }
-            else if (keysPressed.d) {
+            else if (keysPressed.d || (gamepad != null && gamepad.axes[0] > 0.3)) {
                 playerX += speed;
                 facingLeft = false;
                 facingRight = true;
@@ -85,8 +106,6 @@
             else if (facingDown && facingRight) direction = 1;
             else if (facingDown && facingLeft) direction = 3;
             else if (facingDown && !facingLeft && !facingRight) direction = 2;
-
-
         }
 
         function draw() {
@@ -94,13 +113,14 @@
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             context.font = 'normal 12pt Lucida Console';
-            context.fillText('up:    ' + facingUp,      0, 305);
-            context.fillText('down:  ' + facingDown,    0, 320);
-            context.fillText('left:  ' + facingLeft,    0, 335);
-            context.fillText('right: ' + facingRight,   0, 350);
-            context.fillText('dir:   ' + direction,     0, 365);
-            context.fillText('x:     ' + playerX,       0, 380);
-            context.fillText('y:     ' + playerY,       0, 395);
+            context.fillText('gamepad:  ' + gamepadName,   0, 290);
+            context.fillText('up:       ' + facingUp,      0, 305);
+            context.fillText('down:     ' + facingDown,    0, 320);
+            context.fillText('left:     ' + facingLeft,    0, 335);
+            context.fillText('right:    ' + facingRight,   0, 350);
+            context.fillText('dir:      ' + direction,     0, 365);
+            context.fillText('x:        ' + playerX,       0, 380);
+            context.fillText('y:        ' + playerY,       0, 395);
 
             if (playerSprite.complete) drawPlayer();
         }
@@ -137,7 +157,7 @@
         <em>Fly a dragon around for no apparent reason! I wanted to mess around some more with the canvas element, so I found a <a href="http://cse.spsu.edu/jpreston/cgdd4203/AndroidGames/background.html" target="_blank">sprite sheet</a> and gave it a whirl.</em>
     </p>
     <p>
-        <em>Use W, A, S, D to fly!</em>
+        <em>Use W, A, S, D to fly (or try a gamepad if you're using Chrome)!</em>
     </p>
     <br />
     <canvas id="canvas" width="600" height="400" style="border: thin solid black;" />
