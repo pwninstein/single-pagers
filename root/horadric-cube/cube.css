@@ -12,8 +12,8 @@ footer ul li { display: inline; }
 	border: thin solid black;
 }
 
-.rune { background-image:url('/resource/horadric-cube/runes.png'); }
-.gem { background-image:url('/resource/horadric-cube/gems-and-jewels.png'); }
+.rune { background-image:url('runes.png'); }
+.gem { background-image:url('gems-and-jewels.png'); }
 
 .el { background-position: 0px 0px; }
 .eld { background-position: -32px 0px; }
