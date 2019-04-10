@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('showbox').addEventListener( 'change', function() {
         showbox = this.checked;
+        Redraw();
     });
 
     var canvas = document.getElementById('canvas');
