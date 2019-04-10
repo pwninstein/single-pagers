@@ -1,5 +1,5 @@
 var canvasWidth, canvasHeight, canvas;
-var xmin, xmax, ymin, ymax, iterations;
+var xmin, xmax, ymin, ymax, iterations, showbox = true;
 /** @type {CanvasRenderingContext2D} */
 var context, imageData, pixels;
 
@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
         SetIterations(50);
         Redraw();
     }
+
+    document.getElementById('showbox').addEventListener( 'change', function() {
+        showbox = this.checked;
+    });
 
     var canvas = document.getElementById('canvas');
     canvas.addEventListener('mousedown', function (e) { Zoom(canvas, e); });
@@ -71,6 +75,8 @@ function Zoom(canvas, event) {
 }
 
 function DrawBox(canvas, event) {
+    if(!showbox) return;
+    
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
