@@ -4,23 +4,6 @@ var xmin, xmax, ymin, ymax, iterations, showbox = true;
 var context, imageData, pixels;
 
 document.addEventListener('DOMContentLoaded', function () {
-    var goButton = document.getElementById('go-button');
-    goButton.onclick = function(event) {
-        event.preventDefault();
-        Redraw();
-    };
-
-    var resetButton = document.getElementById('reset-button');
-    resetButton.onclick = function(){
-        SetRange(-2, 2, -2, 2);
-        SetIterations(50);
-        Redraw();
-    }
-
-    document.getElementById('showbox').addEventListener( 'change', function() {
-        showbox = this.checked;
-        Redraw();
-    });
 
     var canvas = document.getElementById('canvas');
     canvas.addEventListener('mousedown', function (e) { Zoom(canvas, e); });
@@ -32,17 +15,31 @@ document.addEventListener('DOMContentLoaded', function () {
     imageData = context.createImageData(canvas.width, canvas.height);
     pixels = new Uint32Array(imageData.data.buffer);
 
-    Redraw();
+    document.getElementById('go-button').onclick = function(event) {
+        event.preventDefault();        
+        Go();
+    };
+
+    document.getElementById('reset-button').onclick = function(){
+        SetRange(-2, 2, -2, 2);
+        SetIterations(50);
+        Go();
+    }
+
+    document.getElementById('showbox').addEventListener( 'change', function() {
+        showbox = this.checked;
+        DrawImageData();
+    });
+
+    Go();
 });
 
-function Redraw(){
-    ReadParams();
-    CalculateVelocities();
-    CalculateImageData();
-    DrawImageData();
+function Go(){
+    UpdateParams();
+    RecalculateAndRedraw();
 }
 
-function ReadParams() {
+function UpdateParams(){
     xmin = +(document.getElementById('xmin').value);
     xmax = +(document.getElementById('xmax').value);
     ymin = +(document.getElementById('ymin').value);
@@ -50,18 +47,32 @@ function ReadParams() {
     iterations = +(document.getElementById('iterations').value);
 }
 
-function SetRange(xmin, xmax, ymin, ymax){
-    document.getElementById('xmin').value = xmin;
-    document.getElementById('xmax').value = xmax
-    document.getElementById('ymin').value = ymin;
-    document.getElementById('ymax').value =  ymax;
+function RecalculateAndRedraw(){
+    CalculateVelocities();
+    CalculateImageData();
+    DrawImageData();
+}
+
+function SetRange(xmin2, xmax2, ymin2, ymax2){
+    document.getElementById('xmin').value = xmin = xmin2;
+    document.getElementById('xmax').value = xmax = xmax2
+    document.getElementById('ymin').value = ymin = ymin2;
+    document.getElementById('ymax').value = ymax = ymax2;
 }
 
 function SetIterations(iterations){
     document.getElementById('iterations').value =  iterations;
 }
 
+var isZooming = false;
+var animationFrames = 30;
+var currentFrame = 0;
+var newImage;
+var zInitLeft, zInitTop, zInitRight, zInitBottom;
+
 function Zoom(canvas, event) {
+    UpdateParams();
+
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
@@ -72,11 +83,49 @@ function Zoom(canvas, event) {
         GetI(y - (canvasHeight / 8)), 
         GetI(y + (canvasHeight / 8)));
 
-    Redraw();
+    isZooming = true;
+    currentFrame = 0;
+    zInitLeft = (x - (canvasWidth / 8));
+    zInitTop = (y - (canvasHeight / 8));
+    zInitRight = (x + (canvasWidth / 8));
+    zInitBottom = (y + (canvasHeight / 8));
+    createImageBitmap(imageData).then(function(response){
+        newImage = response;
+        window.requestAnimationFrame(AnimateZoom);
+    });
+}
+
+function AnimateZoom(timestamp){
+    currentFrame++;
+    var factor = currentFrame / animationFrames;
+    
+    // context.drawImage(newImage, 
+    //     zInitLeft, 
+    //     zInitTop, 
+    //     zInitRight - zInitLeft, 
+    //     zInitBottom - zInitTop, 
+    //     zInitLeft - zInitLeft * factor,
+    //     zInitTop - zInitTop * factor, 
+    //     (zInitRight - zInitLeft) + (canvasWidth - (zInitRight - zInitLeft)) * factor, 
+    //     (zInitBottom - zInitTop) + (canvasHeight - (zInitBottom - zInitTop)) * factor);
+    
+    
+    context.drawImage(newImage, 
+        -zInitLeft * 4 * factor,
+        -zInitTop * 4 * factor, 
+        canvasWidth + ((canvasWidth * 4 - canvasWidth) * factor), 
+        canvasHeight + ((canvasHeight * 4 - canvasHeight) * factor));
+
+    if(currentFrame < animationFrames){
+        window.requestAnimationFrame(AnimateZoom);
+    }else{
+        isZooming = false;
+        RecalculateAndRedraw();
+    }
 }
 
 function DrawBox(canvas, event) {
-    if(!showbox) return;
+    if(!showbox || isZooming) return;
     
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
