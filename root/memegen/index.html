@@ -63,7 +63,6 @@
     </style>
 </head>
 <body onload="onLoad()">
-    <p><a href="https://twitter.com/pwninstein" target="_blank">Twitter</a></p>
     <h2>Meme Generator</h2>
     <p><em>I wanted to see if I could write a client-side-only meme generator that also allowed file downloads. <a href="http://en.wikipedia.org/wiki/Cross-origin_resource_sharing" target="_blank">CORS</a> was a problem to deal with. Thankfully, <a href="http://imgur.com/">imgur</a> (S3?) sets the necessary reponse headers so that, if you set crossOrigin="Anonymous" on the <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement" target="_blank">HTMLImageElement</a>, then calling .toDataURL() on the <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a> doesn't complain about <a href="https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image" target="_blank">tainted</a> canvases... Poor quality, but working. 2 hours well-spent!</em></p>
     <br />
